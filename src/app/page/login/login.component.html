@@ -1,0 +1,74 @@
+<div class="main-wrapper">
+    <div class="account-content">
+        <div class="login-wrapper bg-img">
+            <div class="login-content authent-content">
+                <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+                    <div class="login-userset">
+                        <div class="login-logo logo-normal">
+                           <img src="assets/img/logo.svg" alt="img">
+                       </div>
+                       <a href="index.html" class="login-logo logo-white">
+                           <img src="assets/img/logo-white.svg"  alt="Img">
+                       </a>
+                       <div class="login-userheading">
+                           <h3>Iniciar sesion</h3>
+                           <h4 class="fs-16">Ingrese sus credenciales</h4>
+                       </div>
+                        <div class="mb-3">
+                            <label class="form-label">Correo <span class="text-danger"> *</span></label>
+                            <div class="input-group">
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="Inputemail"
+                                    placeholder="Ingrese su email"
+                                    formControlName="email"
+                                    autocomplete="email" class="form-control border-end-0"
+                                    />
+                                
+                                <span class="input-group-text border-start-0">
+                                    <i class="ti ti-mail"></i>
+                                </span>
+                            </div>
+                            <div class="invalid" *ngIf="submitted() && f.email.errors">
+                                <small *ngIf="f.email.errors['required']">El email es obligatorio.</small>
+                                <small *ngIf="f.email.errors['email']">Formato de email inválido.</small>
+                              </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña <span class="text-danger"> *</span></label>
+                            <div class="pass-group">
+                                <input
+                                [type]="showPassword() ? 'text' : 'password'"
+                                class="form-control"
+                                id="Inputpassword"
+                                placeholder="Ingrese su contraseña"
+                                formControlName="password"
+                                autocomplete="current-password" class="pass-input form-control"
+                                />
+                                <span class="ti toggle-password ti-eye-off text-gray-9" (click)="togglePassword()" aria-label="Mostrar/ocultar contraseña"></span>
+                            </div>
+                            
+                      
+                              <div class="invalid" *ngIf="submitted() && f.password.errors">
+                                <small *ngIf="f.password.errors['required']">La contraseña es obligatoria.</small>
+                                <small *ngIf="f.password.errors['minlength']">Mínimo 6 caracteres.</small>
+                              </div>
+                        </div>
+                      
+                       <div class="form-login">
+                           <button class="btn theme-btn w-100 auth-btn" type="submit" [disabled]="loading() || form.invalid" class="btn btn-primary w-100">
+                            <span *ngIf="!loading()">Iniciar Sesión</span>
+                            <span *ngIf="loading()">Ingresando…</span>
+                          </button>
+                       </div>
+                      
+                       <div class="my-4 d-flex justify-content-center align-items-center copyright-text">
+                        <p>Desarrollado por<!--  &copy; --> BUCKAPI 2025</p>
+                    </div>
+                   </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
