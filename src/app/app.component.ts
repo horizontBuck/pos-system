@@ -7,23 +7,27 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
 import { HorizontalSidebarComponent } from './components/horizontal-sidebar/horizontal-sidebar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { CommonModule } from '@angular/common';
 
 declare const iconsax: any;
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet,
+  imports: [
+    CommonModule,
+    RouterOutlet,
     HeaderComponent,
     HorizontalSidebarComponent,
     SidebarComponent, 
+    
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
   title = 'pos';
-
+  isLoginRoute = false;
   hideHeader = false;
   
   constructor(public router: Router,private cfg: ConfigMobileService) {

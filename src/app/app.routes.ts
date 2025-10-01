@@ -24,20 +24,5 @@ export const routes: Routes = [
       },
       { path: '**', redirectTo: 'login' },
     
-    /* {
-        path: '',
-        component: HomeComponent,
-        title: 'POS | SISTEMA DE INVESTARIO',
-        data: {
-          description: 'Sistema de inventario y facturación conectado con SIIGO',
-          canonical: '/',
-        },
-      },
-      {
-        path: 'login',
-        loadComponent: () =>
-          import('./page/login/login.component').then(c => c.LoginComponent),
-        title: 'Login | POS',
-      },      
-      { path: '**', redirectTo: '' }, */
+   
 ];

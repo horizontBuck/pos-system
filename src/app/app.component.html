@@ -1,5 +1,5 @@
-<router-outlet></router-outlet>
 
-<app-header></app-header>
-<app-sidebar></app-sidebar>
-<app-horizontal-sidebar></app-horizontal-sidebar>
+<app-header *ngIf="!isLoginRoute"></app-header>
+<app-sidebar *ngIf="!isLoginRoute"></app-sidebar>
+<app-horizontal-sidebar *ngIf="!isLoginRoute"></app-horizontal-sidebar>
+<router-outlet></router-outlet>
