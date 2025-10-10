@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { LoginComponent } from './page/login/login.component';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
@@ -8,6 +8,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { HorizontalSidebarComponent } from './components/horizontal-sidebar/horizontal-sidebar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { CommonModule } from '@angular/common';
+import { ScriptLoaderService } from './services/script-loader.service';
 
 declare const iconsax: any;
 
@@ -20,27 +21,31 @@ declare const iconsax: any;
     HeaderComponent,
     HorizontalSidebarComponent,
     SidebarComponent, 
-    
   ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
   title = 'pos';
   isLoginRoute = false;
   hideHeader = false;
   
-  constructor(public router: Router,private cfg: ConfigMobileService) {
+  constructor(
+    public router: Router,
+    private cfg: ConfigMobileService,
+    private scriptLoaderService: ScriptLoaderService
+  ) {
     this.cfg.load();
-// app.component.ts
 
-
-    this.router.events.subscribe(() => {
-      this.hideHeader = this.router.url === '/register';
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.isLoginRoute = ['/login', '/register'].includes(this.router.url);
+        this.hideHeader = this.router.url === '/register';
+      }
     });
   }
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
     this.router.events.pipe(
       filter(e => e instanceof NavigationEnd)
     ).subscribe(() => {
@@ -48,5 +53,29 @@ export class AppComponent {
         if (typeof iconsax?.replace === 'function') iconsax.replace();
       });
     });
+
+    try {
+      await this.scriptLoaderService.loadAll([
+        { src: 'assets/js/jquery-3.7.1.min.js', attr: { defer: 'true' } },
+        { src: 'assets/js/feather.min.js', attr: { defer: 'true' } },
+        { src: 'assets/js/jquery.slimscroll.min.js', attr: { defer: 'true' } },
+        { src: 'assets/js/bootstrap.bundle.min.js', attr: { defer: 'true' } },
+        { src: 'assets/plugins/apexchart/apexcharts.min.js', attr: { defer: 'true' } },
+        { src: 'assets/plugins/apexchart/chart-data.js', attr: { defer: 'true' } },
+        { src: 'assets/plugins/chartjs/chart.min.js', attr: { defer: 'true' } },
+        { src: 'assets/plugins/chartjs/chart-data.js', attr: { defer: 'true' } },
+        { src: 'assets/js/moment.min.js', attr: { defer: 'true' } },
+        { src: 'assets/plugins/daterangepicker/daterangepicker.js', attr: { defer: 'true' } },
+        { src: 'assets/plugins/select2/js/select2.min.js', attr: { defer: 'true' } },
+        { src: 'assets/plugins/@simonwep/pickr/pickr.es5.min.js', attr: { defer: 'true' } },
+        { src: 'assets/js/theme-colorpicker.js', attr: { defer: 'true' } },
+        { src: 'assets/js/script.js', attr: { defer: 'true' } }
+      ]);
+
+      // Inicialización de código que depende de los scripts cargados
+      (window as any).SVGInject?.(document.querySelectorAll("img.injectable"));
+    } catch (err) {
+      console.error('Error cargando scripts', err);
+    }
   }
 }
