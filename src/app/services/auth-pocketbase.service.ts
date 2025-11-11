@@ -18,7 +18,7 @@ export class AuthPocketbaseService {
   public pb: PocketBase;
 
   constructor() {
-    this.pb = new PocketBase('https://db.donreparador.com:8090');
+    this.pb = new PocketBase('https://db.buckapi.site:8020');
   }
 
   private randomPassword(len = 18): string {
@@ -28,13 +28,42 @@ export class AuthPocketbaseService {
     return Array.from(bytes, b => chars[b % chars.length]).join('');
   }
 
-  isLoggedIn(): boolean {
-    return this.pb.authStore.isValid && !!this.pb.authStore.model;
+
+ async login(email: string, password: string) {
+    const authData = await this.pb.collection('users').authWithPassword(email, password);
+
+    // Guarda la sesión
+    localStorage.setItem('token', this.pb.authStore.token);
+    localStorage.setItem('companyId', authData.record['companyId'] || '');
+    localStorage.setItem('role', authData.record['role'] || '');
+    localStorage.setItem('user', JSON.stringify(authData.record));
+
+    return authData;
   }
 
-  currentUser(): RecordModel | null {
-    return this.pb.authStore.model;
+  logout() {
+    this.pb.authStore.clear();
+    localStorage.clear();
   }
+
+  get companyId() {
+    return localStorage.getItem('companyId');
+  }
+
+  get role() {
+    return localStorage.getItem('role');
+  }
+
+  get user() {
+    return JSON.parse(localStorage.getItem('user') || '{}');
+  }
+
+  get isLoggedIn() {
+    return this.pb.authStore.isValid;
+  }
+
+
+
 
   fileUrl(record: RecordModel | null | undefined, fileName?: string, thumb?: string): string | null {
     if (!record || !fileName) return null;
@@ -89,18 +118,12 @@ export class AuthPocketbaseService {
     return record;
   }
 
-  async login(email: string, password: string) {
-    const res = await this.pb.collection('users').authWithPassword(email, password);
-    return res.record;
-  }
 
   async requestPasswordReset(email: string) {
     await this.pb.collection('users').requestPasswordReset(email);
   }
 
-  logout() {
-    this.pb.authStore.clear();
-  }
+
   getCurrentUserId(): string | null {
     return this.pb.authStore.model?.id ?? null;
   }

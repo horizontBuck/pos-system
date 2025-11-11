@@ -7,7 +7,7 @@ import { AuthPocketbaseService } from '../../services/auth-pocketbase.service';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, ReactiveFormsModule,],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -20,11 +20,25 @@ export class LoginComponent {
   submitted = signal(false);
   errorMsg = signal<string | null>(null);
   showPassword = signal(false);
+  companies: any[] = []; // 👈 Añadimos la propiedad companies
 
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
+    companyId: ['', Validators.required],
   });
+async ngOnInit() {
+    try {
+      // Cargar la lista de empresas al iniciar el componente
+      const result = await this.auth.pb.collection('companies').getList(1, 50, {
+        sort: 'name',
+      });
+      this.companies = result.items;
+    } catch (error) {
+      console.error('Error cargando empresas:', error);
+      this.errorMsg.set('Error al cargar la lista de empresas');
+    }
+  }
 
   get f() { return this.form.controls; }
 
@@ -32,7 +46,7 @@ export class LoginComponent {
     this.showPassword.set(!this.showPassword());
   }
 
-  async onSubmit() {
+ /*  async onSubmit() {
     this.submitted.set(true);
     this.errorMsg.set(null);
     if (this.form.invalid) return;
@@ -63,13 +77,40 @@ export class LoginComponent {
       // Cliente o proveedor activo
       await this.router.navigate(['/home']);
 
-    } /* catch (e: any) {
-      // Mapea errores comunes de PB
-      const msg = this.mapLoginError(e);
-      this.errorMsg.set(msg);
-      await Swal.fire({ icon: 'error', title: 'Error de acceso', text: msg, confirmButtonText: 'Revisar' });
-    } */ finally {
+    }  finally {
       this.loading.set(false);
     }
+  } */
+ async onSubmit() {
+  this.submitted.set(true);
+  this.errorMsg.set(null);
+  if (this.form.invalid) return;
+
+  this.loading.set(true);
+
+  try {
+    const { email, password, companyId } = this.form.value;
+    const data = await this.auth.login(email!, password!);
+
+    // Validar empresa seleccionada
+    const storedCompany = localStorage.getItem('companyId');
+    if (storedCompany !== companyId) {
+      throw new Error('El usuario no pertenece a la empresa seleccionada');
+    }
+
+    // Mostrar logs solo para ver
+    console.log('Empresa:', storedCompany);
+    console.log('Rol:', localStorage.getItem('role'));
+
+    // Redirigir al home
+    await this.router.navigate(['/home']);
+  } catch (err: any) {
+    console.error('Error de login:', err);
+    this.errorMsg.set(err.message || 'Credenciales incorrectas');
+  } finally {
+    this.loading.set(false);
   }
+}
+
+
 }

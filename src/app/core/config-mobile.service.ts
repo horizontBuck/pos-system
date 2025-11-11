@@ -20,7 +20,7 @@ export type AppConfigRecord = RecordModel & {
 
 @Injectable({ providedIn: 'root' })
 export class ConfigMobileService {
-  private pb = new PocketBase((window as any).PB_URL || 'https://db.donreparador.com:8090');
+  private pb = new PocketBase((window as any).PB_URL || 'https://db.buckapi.site:8090');
 
   /** estado reactivo */
   readonly cfg = signal<AppConfigRecord | null>(null);

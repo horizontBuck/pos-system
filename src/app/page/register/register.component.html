@@ -1,0 +1,98 @@
+<div class="main-wrapper">
+  <div class="account-content">
+    <div class="login-wrapper bg-img">
+      <div class="login-content authent-content">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+          <div class="login-userset">
+            <div class="login-logo logo-normal">
+              <img src="assets/img/logo.png" alt="logo" />
+            </div>
+            <a href="/" class="login-logo logo-white">
+              <img src="assets/img/logo-white.png" alt="logo-blanco" />
+            </a>
+
+            <div class="login-userheading">
+              <h3>Crear cuenta</h3>
+              <h4 class="fs-16">Regístrese para comenzar</h4>
+            </div>
+
+            <!-- Nombre de empresa -->
+            <div class="mb-3">
+              <label class="form-label">Nombre de empresa <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Ejemplo: Mantenimiento ACME"
+                formControlName="company"
+              />
+              <div class="invalid" *ngIf="submitted && f['company'].errors">
+                <small *ngIf="f['company'].errors['required']">El nombre de la empresa es obligatorio.</small>
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label class="form-label">Correo electrónico <span class="text-danger">*</span></label>
+              <input
+                type="email"
+                class="form-control"
+                placeholder="usuario@empresa.com"
+                formControlName="email"
+              />
+              <div class="invalid" *ngIf="submitted && f['email'].errors">
+                <small *ngIf="f['email'].errors['required']">El email es obligatorio.</small>
+                <small *ngIf="f['email'].errors['email']">Formato de email inválido.</small>
+              </div>
+            </div>
+
+            <!-- Contraseña -->
+            <div class="mb-3">
+              <label class="form-label">Contraseña <span class="text-danger">*</span></label>
+              <div class="pass-group">
+                <input
+                  [type]="showPassword() ? 'text' : 'password'"
+                  class="form-control"
+                  placeholder="Ingrese su contraseña"
+                  formControlName="password"
+                />
+                <span
+                  class="ti toggle-password ti-eye-off text-gray-9"
+                  (click)="togglePassword()"
+                  aria-label="Mostrar/ocultar contraseña"
+                ></span>
+              </div>
+              <div class="invalid" *ngIf="submitted && f['password'].errors">
+                <small *ngIf="f['password'].errors['required']">La contraseña es obligatoria.</small>
+                <small *ngIf="f['password'].errors['minlength']">Mínimo 6 caracteres.</small>
+              </div>
+            </div>
+
+            <!-- Botón -->
+            <div class="form-login">
+             
+                <button
+                
+                class="btn theme-btn w-100 auth-btn"
+                type="submit" class="btn btn-primary w-100"
+                [disabled]="loading || form.invalid"
+                >
+                <span *ngIf="!loading">Crear cuenta</span>
+                <span *ngIf="loading">Creando...</span>
+                </button>
+            </div>
+
+            <div class="text-center mt-3">
+              <p>¿Ya tienes una cuenta?
+                <a routerLink="/login" class="text-primary">Iniciar sesión</a>
+              </p>
+            </div>
+
+            <div class="my-4 d-flex justify-content-center align-items-center copyright-text">
+              <p>Desarrollado por BUCKAPI 2025</p>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
