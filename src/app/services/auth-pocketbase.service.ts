@@ -44,6 +44,7 @@ export class AuthPocketbaseService {
   logout() {
     this.pb.authStore.clear();
     localStorage.clear();
+    
   }
 
   get companyId() {
