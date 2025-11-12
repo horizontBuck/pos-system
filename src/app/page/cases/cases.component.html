@@ -1,0 +1,177 @@
+<div class="page-wrapper">
+  <div class="content">
+    <div class="page-header">
+      <div class="add-item d-flex">
+        <div class="page-title">
+          <h4>Casos de mantenimiento</h4>
+          <h6>Equipos registrados y en servicio</h6>
+        </div>
+      </div>
+
+      <ul class="table-top-head">
+        <li class="me-2">
+          <a data-bs-toggle="tooltip" title="Actualizar" (click)="loadCases()">
+            <i class="ti ti-refresh"></i>
+          </a>
+        </li>
+      </ul>
+
+      <div class="page-btn">
+        <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-case">
+          <i class="ti ti-circle-plus me-1"></i>Nuevo caso
+        </a>
+      </div>
+    </div>
+
+    <!-- Tabla de Casos -->
+    <div class="card">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table datatable">
+            <thead class="thead-light">
+              <tr>
+                <th>Código</th>
+                <th>Cliente</th>
+                <th>Equipo</th>
+                <th>Estado</th>
+                <th>Prioridad</th>
+                <th>Fecha recepción</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of cases">
+                <td>{{ c.internal_code }}</td>
+                <td>{{ c.contact_name }}</td>
+                <td>{{ c.equipment_type }}</td>
+                <td>
+                  <span [ngClass]="{
+                    'badge bg-warning': c.status === 'Pendiente',
+                    'badge bg-info': c.status === 'En proceso',
+                    'badge bg-success': c.status === 'Finalizado'
+                  }">
+                    {{ c.status }}
+                  </span>
+                </td>
+                <td>{{ c.priority }}</td>
+                <td>{{ c.reception_date | date:'shortDate' }}</td>
+                <td class="action-table-data">
+                  <div class="edit-delete-action">
+                    <a class="me-2 p-2" (click)="editCase(c)" data-bs-toggle="modal" data-bs-target="#add-case">
+                      <i class="ti ti-edit"></i>
+                    </a>
+                    <a class="p-2 text-danger" (click)="deleteCase(c)">
+                      <i class="ti ti-trash"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+
+              <tr *ngIf="cases.length === 0">
+                <td colspan="7" class="text-center text-muted py-4">No hay casos registrados.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer d-sm-flex align-items-center justify-content-between border-top bg-white p-3">
+    <p class="mb-0">2025 © CRM Buckapi</p>
+    <p>Desarrollado por <a href="#" class="text-primary">Buckapi</a></p>
+  </div>
+</div>
+
+<!-- MODAL UNIFICADO (Agregar / Editar) -->
+<div class="modal fade" id="add-case">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ editMode ? 'Editar caso' : 'Registrar nuevo caso' }}</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form (ngSubmit)="saveCase()" class="modal-body">
+        <div class="row">
+          <!-- Cliente -->
+          <div class="col-md-8 mb-3">
+            <label>Cliente</label>
+            <select [(ngModel)]="form.client" name="client" class="form-select" required>
+              <option value="">Seleccionar cliente</option>
+              <option *ngFor="let cl of clients" [value]="cl.id">{{ cl.contact_name }} - {{ cl.phone }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-4 mb-3 d-flex align-items-end">
+            <button type="button" class="btn btn-outline-primary w-100" (click)="openClientModal()">
+              <i class="ti ti-circle-plus me-1"></i> Nuevo cliente
+            </button>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label>Tipo de equipo</label>
+            <select [(ngModel)]="form.equipment_type" name="equipment_type" class="form-select" required>
+              <option value="">Seleccionar</option>
+              <option>Motor</option>
+              <option>Bomba</option>
+              <option>Compresor</option>
+              <option>Generador</option>
+            </select>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label>Prioridad</label>
+            <select [(ngModel)]="form.priority" name="priority" class="form-select">
+              <option>Normal</option>
+              <option>Urgente</option>
+              <option>Crítica</option>
+            </select>
+          </div>
+
+          <div class="col-md-12 mb-3">
+            <label>Comentarios del cliente</label>
+            <textarea [(ngModel)]="form.reported_issues" name="reported_issues" class="form-control"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">{{ editMode ? 'Guardar cambios' : 'Registrar caso' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SECUNDARIO PARA NUEVO CLIENTE -->
+ <div class="modal fade" id="add-client">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Registrar nuevo cliente</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form (ngSubmit)="saveNewClient()" class="modal-body">
+        <div class="mb-3">
+          <label>Nombre completo</label>
+          <input type="text" [(ngModel)]="newClient.contact_name" name="contact_name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label>Teléfono</label>
+          <input type="text" [(ngModel)]="newClient.phone" name="phone" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label>Email</label>
+          <input type="email" [(ngModel)]="newClient.email" name="email" class="form-control">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar cliente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> 
+

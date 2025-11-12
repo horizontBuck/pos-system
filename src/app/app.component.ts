@@ -5,10 +5,10 @@ import { filter } from 'rxjs';
 import { ConfigMobileService } from './core/config-mobile.service';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
-import { HorizontalSidebarComponent } from './components/horizontal-sidebar/horizontal-sidebar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { CommonModule } from '@angular/common';
 import { ScriptLoaderService } from './services/script-loader.service';
+import { AuthPocketbaseService } from './services/auth-pocketbase.service';
 
 declare const iconsax: any;
 
@@ -19,7 +19,6 @@ declare const iconsax: any;
     CommonModule,
     RouterOutlet,
     HeaderComponent,
-    HorizontalSidebarComponent,
     SidebarComponent, 
   ],
   templateUrl: './app.component.html',
@@ -33,7 +32,8 @@ export class AppComponent implements AfterViewInit {
   constructor(
     public router: Router,
     private cfg: ConfigMobileService,
-    private scriptLoaderService: ScriptLoaderService
+    private scriptLoaderService: ScriptLoaderService,
+    public auth: AuthPocketbaseService
   ) {
     this.cfg.load();
 
@@ -45,6 +45,15 @@ export class AppComponent implements AfterViewInit {
     });
   }
 
+  ngOnInit() {
+    // Revalidar sesión persistida en PocketBase
+    if (this.auth.pb.authStore.isValid) {
+      console.log('Sesión válida detectada.');
+    } else {
+      console.log('Sin sesión activa, redirigiendo a login...');
+      this.router.navigate(['/login']);
+    }
+  }
   async ngAfterViewInit() {
     this.router.events.pipe(
       filter(e => e instanceof NavigationEnd)

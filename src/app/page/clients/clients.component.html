@@ -1,0 +1,134 @@
+<div class="page-wrapper">
+  <div class="content">
+    <div class="page-header">
+      <div class="add-item d-flex">
+        <div class="page-title">
+          <h4 class="fw-bold">Clientes</h4>
+          <h6>Gestión de clientes</h6>
+        </div>
+      </div>
+
+      <ul class="table-top-head">
+        <li>
+          <a data-bs-toggle="tooltip" title="Actualizar" (click)="loadClients()">
+            <i class="ti ti-refresh"></i>
+          </a>
+        </li>
+      </ul>
+
+      <div class="page-btn">
+        <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#add-customer" (click)="newClient()">
+          <i class="ti ti-circle-plus me-1"></i> Nuevo Cliente
+        </a>
+      </div>
+    </div>
+
+    <!-- Tabla de clientes -->
+    <div class="card">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table datatable">
+            <thead class="thead-light">
+              <tr>
+                <th>Cod.</th>
+                <th>Cliente</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+                <th>Ciudad</th>
+                <th>Estado</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of clients">
+                <td>{{ c.code }}</td>
+                <td>{{ c.contact_name }}</td>
+                <td>{{ c.email }}</td>
+                <td>{{ c.phone }}</td>
+                <td>{{ c.city }}</td>
+                <td>
+                  <span [ngClass]="{
+                    'badge bg-success': c.active,
+                    'badge bg-danger': !c.active
+                  }">
+                    {{ c.active ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+                <td class="action-table-data">
+                  <div class="edit-delete-action">
+                    <a class="me-2 p-2" (click)="editClient(c)" data-bs-toggle="modal" data-bs-target="#add-customer">
+                      <i class="ti ti-edit"></i>
+                    </a>
+                    <a class="p-2 text-danger" (click)="deleteClient(c)">
+                      <i class="ti ti-trash"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+
+              <tr *ngIf="clients.length === 0">
+                <td colspan="7" class="text-center text-muted py-4">
+                  No hay clientes registrados.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer d-sm-flex align-items-center justify-content-between border-top bg-white p-3">
+    <p class="mb-0">2025 © CRM Buckapi</p>
+    <p>Desarrollado por <a href="#" class="text-primary">Buckapi</a></p>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal fade" id="add-customer">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ editMode ? 'Editar Cliente' : 'Registrar Nuevo Cliente' }}</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form (ngSubmit)="saveClient()" class="modal-body">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label>Nombre completo</label>
+            <input type="text" [(ngModel)]="form.contact_name" name="contact_name" class="form-control" required>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Email</label>
+            <input type="email" [(ngModel)]="form.email" name="email" class="form-control">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Teléfono</label>
+            <input type="text" [(ngModel)]="form.phone" name="phone" class="form-control">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label>Ciudad</label>
+            <input type="text" [(ngModel)]="form.city" name="city" class="form-control">
+          </div>
+          <div class="col-md-12 mb-3">
+            <label>Dirección</label>
+            <input type="text" [(ngModel)]="form.address" name="address" class="form-control">
+          </div>
+          <div class="col-md-12 mb-3">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" [(ngModel)]="form.active" name="active" id="activeSwitch">
+              <label class="form-check-label" for="activeSwitch">Activo</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">{{ editMode ? 'Guardar Cambios' : 'Registrar Cliente' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -46,13 +46,23 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['/search'], { queryParams: { q: term } });
   }
 
+ 
   goTo(route: string) {
-    this.router.navigate([route]);
-  }
+  this.router.navigateByUrl(route);
+}
 
-  logout() {
+ /*  logout() {
     pb.authStore.clear();
     localStorage.clear();
     this.router.navigate(['/login']);
-  }
+  } */
+  logout() {
+  pb.authStore.clear();
+  localStorage.clear();
+  sessionStorage.clear();
+
+  // Redirigir y limpiar navegación
+  window.location.replace('/login');
+}
+
 }

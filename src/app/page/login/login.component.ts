@@ -15,6 +15,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthPocketbaseService);
   private router = inject(Router);
+  isSuperAdmin = false;
 
   loading = signal(false);
   submitted = signal(false);
@@ -46,42 +47,7 @@ async ngOnInit() {
     this.showPassword.set(!this.showPassword());
   }
 
- /*  async onSubmit() {
-    this.submitted.set(true);
-    this.errorMsg.set(null);
-    if (this.form.invalid) return;
-
-    this.loading.set(true);
-    try {
-      const email = this.form.value.email!;
-      const password = this.form.value.password!;
-
-      const user = await this.auth.login(email, password); // 👈 PB authWithPassword
-
-      // Lógica de post-login según rol/estado
-      const rolw = (user as any)?.rolw as ('client'|'provider'|undefined);
-      const status = (user as any)?.status as boolean | undefined; // true=activo
-
-      if (rolw === 'provider' && status === false) {
-        await Swal.fire({
-          icon: 'info',
-          title: 'Cuenta en revisión',
-          text: 'Tu cuenta de proveedor será revisada por el equipo antes de activarse.',
-          confirmButtonText: 'Entendido'
-        });
-        // Redirige a perfil para completar docs, por ejemplo:
-        await this.router.navigate(['/profile']);
-        return;
-      }
-
-      // Cliente o proveedor activo
-      await this.router.navigate(['/home']);
-
-    }  finally {
-      this.loading.set(false);
-    }
-  } */
- async onSubmit() {
+/*  async onSubmit() {
   this.submitted.set(true);
   this.errorMsg.set(null);
   if (this.form.invalid) return;
@@ -103,6 +69,41 @@ async ngOnInit() {
     console.log('Rol:', localStorage.getItem('role'));
 
     // Redirigir al home
+    await this.router.navigate(['/home']);
+  } catch (err: any) {
+    console.error('Error de login:', err);
+    this.errorMsg.set(err.message || 'Credenciales incorrectas');
+  } finally {
+    this.loading.set(false);
+  }
+} */
+async onSubmit() {
+  this.submitted.set(true);
+  this.errorMsg.set(null);
+  if (this.form.invalid) return;
+
+  this.loading.set(true);
+
+  try {
+    const { email, password, companyId } = this.form.value;
+    const data = await this.auth.login(email!, password!);
+
+    const role = localStorage.getItem('role');
+    const storedCompany = localStorage.getItem('companyId');
+
+    // 🧠 Si es superadmin, puede entrar sin empresa
+    if (role === 'superadmin') {
+      await this.router.navigate(['/admin/companies']); // 👈 vista para superadmin
+      return;
+    }
+
+    // 🚫 Validar empresa seleccionada para usuarios normales
+    if (!storedCompany || storedCompany !== companyId) {
+      throw new Error('El usuario no pertenece a la empresa seleccionada.');
+    }
+    this.isSuperAdmin = localStorage.getItem('role') === 'superadmin';
+
+    // ✅ Si todo ok → ir al home de la empresa
     await this.router.navigate(['/home']);
   } catch (err: any) {
     console.error('Error de login:', err);

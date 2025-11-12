@@ -1,0 +1,137 @@
+<div class="page-wrapper">
+  <div class="content">
+    <div class="page-header">
+      <div class="add-item d-flex">
+        <div class="page-title">
+          <h4 class="fw-bold">Empresas registradas</h4>
+          <h6>Vista general (solo lectura)</h6>
+        </div>
+      </div>
+
+      <ul class="table-top-head">
+        <li>
+          <a data-bs-toggle="tooltip" title="Actualizar" (click)="loadCompanies()">
+            <i class="ti ti-refresh"></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table datatable">
+            <thead class="thead-light">
+              <tr>
+                <th>Logo</th>
+                <th>Nombre</th>
+                <th>Plan</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Creación</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of companies">
+                <td>
+                  <img
+                    *ngIf="getLogoUrl(c)"
+                    [src]="getLogoUrl(c)"
+                    alt="Logo"
+                    width="40"
+                    height="40"
+                    class="rounded-circle border"
+                  />
+                  <span *ngIf="!getLogoUrl(c)" class="text-muted">—</span>
+                </td>
+                <td>{{ c.name }}</td>
+                <td>
+                  <span class="badge bg-info text-dark">{{ c.plan || 'free' }}</span>
+                </td>
+                <td>{{ c.description || 'Sin descripción' }}</td>
+                <td>
+                  <span [ngClass]="{
+                    'badge bg-success': c.active,
+                    'badge bg-danger': !c.active
+                  }">
+                    {{ c.active ? 'Activa' : 'Inactiva' }}
+                  </span>
+                </td>
+                <td>{{ c.created | date:'shortDate' }}</td>
+                <td class="action-table-data">
+                  <div class="edit-delete-action">
+                    <a class="me-2 p-2 text-primary" (click)="viewCompanyDetails(c)">
+                      <i class="ti ti-eye"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+
+              <tr *ngIf="companies.length === 0">
+                <td colspan="7" class="text-center text-muted py-4">
+                  No hay empresas registradas.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer d-sm-flex align-items-center justify-content-between border-top bg-white p-3">
+    <p class="mb-0">2025 © CRM Buckapi</p>
+    <p>Desarrollado por <a href="#" class="text-primary">Buckapi</a></p>
+  </div>
+</div>
+
+<!-- MODAL DE DETALLES -->
+<div class="modal fade" id="view-company">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Detalles de Empresa</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body" *ngIf="selectedCompany">
+        <div class="row">
+          <div class="col-md-4 text-center mb-3">
+            <img
+              *ngIf="getLogoUrl(selectedCompany)"
+              [src]="getLogoUrl(selectedCompany)"
+              alt="Logo"
+              class="rounded-circle border mb-2"
+              width="100"
+              height="100"
+            />
+            <p class="fw-bold">{{ selectedCompany.name }}</p>
+            <span class="badge bg-info text-dark">{{ selectedCompany.plan }}</span>
+          </div>
+
+          <div class="col-md-8">
+            <p><strong>ID:</strong> {{ selectedCompany.id }}</p>
+            <p><strong>Descripción:</strong> {{ selectedCompany.description || '—' }}</p>
+            <p><strong>Plan:</strong> {{ selectedCompany.plan }}</p>
+            <p><strong>Estado:</strong>
+              <span [ngClass]="{
+                'badge bg-success': selectedCompany.active,
+                'badge bg-danger': !selectedCompany.active
+              }">
+                {{ selectedCompany.active ? 'Activa' : 'Inactiva' }}
+              </span>
+            </p>
+            <p><strong>Creada el:</strong> {{ selectedCompany.created | date:'medium' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

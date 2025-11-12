@@ -22,7 +22,7 @@ export class MenuService {
       {
         title: 'ADMINISTRADOR',
         items: [
-          { label: 'Dashboard', icon: 'ti ti-layout-grid', route: '/dashboard' },
+          { label: 'Dashboard', icon: 'ti ti-layout-grid', route: '/home' },
           {
             label: 'Usuarios',
             icon: 'ti ti-user-edit',
@@ -55,7 +55,7 @@ export class MenuService {
       {
         title: 'GESTOR',
         items: [
-          { label: 'Dashboard', icon: 'ti ti-layout-dashboard', route: '/dashboard' },
+          { label: 'Dashboard', icon: 'ti ti-layout-dashboard', route: '/home' },
           { label: 'Proyectos', icon: 'ti ti-briefcase', route: '/projects' },
           { label: 'Tareas', icon: 'ti ti-list-check', route: '/tasks' },
           {

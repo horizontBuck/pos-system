@@ -30,21 +30,25 @@ export class AuthPocketbaseService {
 
 
  async login(email: string, password: string) {
-    const authData = await this.pb.collection('users').authWithPassword(email, password);
+  const authData = await this.pb.collection('users').authWithPassword(email, password);
 
-    // Guarda la sesión
-    localStorage.setItem('token', this.pb.authStore.token);
-    localStorage.setItem('companyId', authData.record['companyId'] || '');
-    localStorage.setItem('role', authData.record['role'] || '');
-    localStorage.setItem('user', JSON.stringify(authData.record));
+  const role = authData.record['role'] || 'user';
+  const companyId = authData.record['companyId'] || '';
 
-    return authData;
-  }
+  // Guarda la sesión
+  localStorage.setItem('token', this.pb.authStore.token);
+  localStorage.setItem('companyId', companyId);
+  localStorage.setItem('role', role);
+  localStorage.setItem('user', JSON.stringify(authData.record));
+
+  return authData;
+}
+
 
   logout() {
     this.pb.authStore.clear();
     localStorage.clear();
-    
+
   }
 
   get companyId() {
@@ -55,6 +59,10 @@ export class AuthPocketbaseService {
     return localStorage.getItem('role');
   }
 
+  get isSuperAdmin() {
+    return this.role === 'superadmin';
+  }
+
   get user() {
     return JSON.parse(localStorage.getItem('user') || '{}');
   }
@@ -62,8 +70,6 @@ export class AuthPocketbaseService {
   get isLoggedIn() {
     return this.pb.authStore.isValid;
   }
-
-
 
 
   fileUrl(record: RecordModel | null | undefined, fileName?: string, thumb?: string): string | null {
