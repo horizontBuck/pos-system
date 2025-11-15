@@ -27,11 +27,11 @@ export class MenuService {
             label: 'Usuarios',
             icon: 'ti ti-user-edit',
             children: [
-              { label: 'Empresas', icon: 'ti ti-building', route: '/companies' },
-              { label: 'Empleados', icon: 'ti ti-users', route: '/users' },
-              { label: 'Clientes', icon: 'ti ti-user', route: '/clients' }
+              { label: 'Clientes', icon: 'ti ti-building', route: '/clients' },
+              { label: 'Tecnicos', icon: 'ti ti-user', route: '/technicians' }
             ]
           },
+          { label: 'Casos de mantenimiento', icon: 'ti ti-puzzle', route: '/cases' },
           {
             label: 'Configuración',
             icon: 'ti ti-settings',

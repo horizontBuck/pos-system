@@ -27,7 +27,7 @@
     <div class="card">
       <div class="card-body p-0">
         <div class="table-responsive">
-          <table class="table datatable">
+          <table class="table">
             <thead class="thead-light">
               <tr>
                 <th>Código</th>
@@ -57,6 +57,10 @@
                 <td>{{ c.reception_date | date:'shortDate' }}</td>
                 <td class="action-table-data">
                   <div class="edit-delete-action">
+                    <a class="me-2 p-2 text-primary" (click)="viewCase(c)" data-bs-toggle="modal" data-bs-target="#detail-case">
+                      <i class="ti ti-eye"></i>
+                    </a>
+
                     <a class="me-2 p-2" (click)="editCase(c)" data-bs-toggle="modal" data-bs-target="#add-case">
                       <i class="ti ti-edit"></i>
                     </a>
@@ -144,6 +148,116 @@
     </div>
   </div>
 </div>
+<!-- MODAL DETALLE DE CASO -->
+<div class="modal fade" id="detail-case">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- HEADER -->
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Detalle del caso – <strong>{{ selectedCase?.internal_code }}</strong>
+        </h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- BODY -->
+      <div class="modal-body">
+
+        <!-- 🔧 SECCIÓN TÉCNICOS -->
+        <div class="mb-4" *ngIf="selectedCase">
+          <h5 class="fw-bold mb-3">Técnicos asignados</h5>
+
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span
+                *ngFor="let t of selectedCase?.expand?.assigned_technicians"
+
+                class="badge bg-dark me-2"
+              >
+                {{ t.name }} ({{ t.phone }})
+              </span>
+
+              <span
+                *ngIf="!selectedCase.expand?.assigned_technicians?.length"
+                class="text-muted"
+              >
+                Ningún técnico asignado.
+              </span>
+            </div>
+
+            <button
+              class="btn btn-primary btn-sm"
+              (click)="openAssignTechnicianModal()"
+            >
+              <i class="ti ti-user-plus me-1"></i> Asignar técnico
+            </button>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- INFO DEL CASO -->
+        <div *ngIf="selectedCase" class="row g-3 mt-3">
+
+          <div class="col-md-6">
+            <label class="fw-bold">Cliente</label>
+            <p>{{ selectedCase.contact_name }}</p>
+          </div>
+
+          <div class="col-md-6">
+            <label class="fw-bold">Estado</label>
+            <p>
+              <span [ngClass]="{
+                'badge bg-warning': selectedCase.status === 'Pendiente',
+                'badge bg-info': selectedCase.status === 'En proceso',
+                'badge bg-success': selectedCase.status === 'Finalizado'
+              }">
+                {{ selectedCase.status }}
+              </span>
+            </p>
+          </div>
+
+          <div class="col-md-6">
+            <label class="fw-bold">Tipo de equipo</label>
+            <p>{{ selectedCase.equipment_type }}</p>
+          </div>
+
+          <div class="col-md-6">
+            <label class="fw-bold">Prioridad</label>
+            <p>{{ selectedCase.priority }}</p>
+          </div>
+
+          <div class="col-md-12">
+            <label class="fw-bold">Problema reportado</label>
+            <div class="alert alert-secondary">
+              {{ selectedCase.reported_issues || 'Sin comentarios' }}
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="fw-bold">Fecha de recepción</label>
+            <p>{{ selectedCase.reception_date | date:'medium' }}</p>
+          </div>
+
+          <div class="col-md-6">
+            <label class="fw-bold">Recibido por</label>
+            <p>{{ selectedCase.received_by }}</p>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 
 <!-- MODAL SECUNDARIO PARA NUEVO CLIENTE -->
  <div class="modal fade" id="add-client">
@@ -174,4 +288,38 @@
     </div>
   </div>
 </div> 
+<!-- MODAL ASIGNAR TÉCNICO -->
+<div class="modal fade" id="assign-technician">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Asignar técnico</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- Seleccionar técnico existente -->
+        <label>Técnico</label>
+        <select class="form-select mb-3" [(ngModel)]="selectedTechnician">
+          <option value="">Seleccionar técnico</option>
+          <option *ngFor="let t of technicians" [value]="t.id">
+            {{ t.name }} - {{ t.phone }}
+          </option>
+        </select>
+
+       <!--  <button class="btn btn-outline-primary w-100 mb-3" (click)="openNewTechnicianModal()">
+          <i class="ti ti-circle-plus me-1"></i> Registrar nuevo técnico
+        </button> -->
+
+        <button class="btn btn-primary w-100" (click)="assignTechnician()">
+          Asignar técnico
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+</div>
 

@@ -14,16 +14,9 @@
                            <h3>Iniciar sesion</h3>
                            <h4 class="fs-16">Ingrese sus credenciales</h4>
                        </div>
-                     <!--   <div class="mb-3">
-  <label class="form-label">Empresa</label>
-  <select formControlName="companyId" class="form-control">
-    <option *ngFor="let c of companies" [value]="c.id">{{ c.name }}</option>
-  </select>
-  <div class="invalid" *ngIf="submitted() && f.companyId.errors">
-    <small *ngIf="f.companyId.errors['required']">La empresa es obligatoria</small>
-  </div>
-</div> -->
-<div class="mb-3" *ngIf="!isSuperAdmin">
+               
+  <div class="mb-3" *ngIf="role === 'superadmin'">
+
   <label class="form-label">Empresa</label>
   <select formControlName="companyId" class="form-control">
     <option *ngFor="let c of companies" [value]="c.id">{{ c.name }}</option>

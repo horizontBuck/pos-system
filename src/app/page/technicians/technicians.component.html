@@ -1,0 +1,169 @@
+<div class="page-wrapper">
+  <div class="content">
+
+    <div class="page-header">
+      <div class="add-item d-flex">
+        <div class="page-title">
+          <h4 class="fw-bold">Técnicos</h4>
+          <h6>Gestión del personal técnico</h6>
+        </div>
+      </div>
+
+      <ul class="table-top-head">
+        <li>
+          <a data-bs-toggle="tooltip" title="Actualizar" (click)="loadTechnicians()">
+            <i class="ti ti-refresh"></i>
+          </a>
+        </li>
+      </ul>
+
+      <div class="page-btn">
+        <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#add-technician" (click)="newTechnician()">
+          <i class="ti ti-circle-plus me-1"></i> Nuevo Técnico
+        </a>
+      </div>
+    </div>
+
+    <!-- MENSAJE DE CONTRASEÑA GENERADA -->
+    <div *ngIf="generatedPassword" class="alert alert-info text-center fw-bold my-3">
+      🔐 Técnico creado — Contraseña temporal:
+      <span class="text-danger">{{ generatedPassword }}</span>
+    </div>
+
+    <!-- Tabla de técnicos -->
+    <div class="card">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table datatable">
+            <thead class="thead-light">
+              <tr>
+                <th>Cod.</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+                <th>Especialidad</th>
+                <th>Estado</th>
+                <th>Usuario</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let t of technicians">
+                <td>{{ t.code }}</td>
+                <td>{{ t.name }}</td>
+                <td>{{ t.email }}</td>
+                <td>{{ t.phone }}</td>
+                <td>{{ t.specialty }}</td>
+
+                <td>
+                  <span [ngClass]="{
+                    'badge bg-success': t.active,
+                    'badge bg-danger': !t.active
+                  }">
+                    {{ t.active ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+
+                <td>
+                  <span *ngIf="t.user" class="badge bg-primary">Vinculado</span>
+                  <span *ngIf="!t.user" class="badge bg-secondary">Sin usuario</span>
+                </td>
+
+                <td class="action-table-data">
+                  <div class="edit-delete-action">
+                    <a class="me-2 p-2" 
+                       (click)="editTechnician(t)" 
+                       data-bs-toggle="modal" 
+                       data-bs-target="#add-technician">
+                      <i class="ti ti-edit"></i>
+                    </a>
+
+                    <a class="p-2 text-danger" (click)="deleteTechnician(t)">
+                      <i class="ti ti-trash"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+
+              <tr *ngIf="technicians.length === 0">
+                <td colspan="8" class="text-center text-muted py-4">
+                  No hay técnicos registrados.
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer d-sm-flex align-items-center justify-content-between border-top bg-white p-3">
+    <p class="mb-0">2025 © CRM Buckapi</p>
+    <p>Desarrollado por <a href="#" class="text-primary">Buckapi</a></p>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal fade" id="add-technician">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h4 class="modal-title">
+          {{ editMode ? 'Editar Técnico' : 'Registrar Nuevo Técnico' }}
+        </h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form (ngSubmit)="saveTechnician()" class="modal-body">
+        <div class="row">
+
+          <div class="col-md-6 mb-3">
+            <label>Nombre completo</label>
+            <input type="text" [(ngModel)]="form.name" name="name" class="form-control" required>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label>Email</label>
+            <input 
+              type="email" 
+              [(ngModel)]="form.email" 
+              name="email" 
+              class="form-control" 
+              required
+              [readonly]="editMode">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label>Teléfono</label>
+            <input type="text" [(ngModel)]="form.phone" name="phone" class="form-control">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label>Especialidad</label>
+            <input type="text" [(ngModel)]="form.specialty" name="specialty" class="form-control">
+          </div>
+
+          <div class="col-md-12 mb-3">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" [(ngModel)]="form.active" name="active" id="activeSwitch">
+              <label class="form-check-label" for="activeSwitch">Activo</label>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">
+            {{ editMode ? 'Guardar Cambios' : 'Registrar Técnico' }}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

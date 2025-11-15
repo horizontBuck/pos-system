@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './page/home/home.component';
 import { authGuard } from './auth.guard';
+import { guestGuard } from './guest.guard';
 
 
 export const routes: Routes = [
@@ -9,6 +10,8 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./page/login/login.component').then(c => c.LoginComponent),
     title: 'Login | CRM',
+      canActivate: [guestGuard],
+
   },
   {
     path: 'home',
@@ -25,6 +28,8 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./page/register/register.component').then(c => c.RegisterComponent),
     title: 'Register | CRM',
+    canActivate: [authGuard],
+
   },
   {
   path: 'cases',
@@ -39,6 +44,13 @@ export const routes: Routes = [
     import('./page/clients/clients.component').then(c => c.ClientsComponent),
   title: 'Gestion de clientes | CRM',
    canActivate: [authGuard],
+  },
+  {
+  path: 'technicians',
+  loadComponent: () => 
+    import('./page/technicians/technicians.component').then(c => c.TechniciansComponent),
+  title: 'Técnicos | CRM',
+  canActivate: [authGuard]
   },
   {
   path: 'admin',
